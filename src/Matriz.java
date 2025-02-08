@@ -12,6 +12,10 @@ class Fila extends Thread {
         this.esUltimo = pesUltimo;
     }
 
+    public Fila() {
+        // TODO Auto-generated constructor stub
+    }
+
     @Override
     public void run() {
         int sumaFila = 0;
@@ -24,6 +28,16 @@ class Fila extends Thread {
             compartido.darTotal();
 
         }
+    }
+
+    public Cliente retirarCliente() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'retirarCliente'");
+    }
+
+    public void agregarCliente(Cliente cliente) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'agregarCliente'");
     }
 
 }

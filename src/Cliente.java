@@ -1,21 +1,31 @@
-public class Cliente extends Thread {
-    private BuzonOrdenes buzon;
+import java.util.Random;
 
-    public Cliente(BuzonOrdenes pbuzon) {
-        this.buzon = pbuzon;
+public class Cliente extends Thread {
+    private int id;
+    private int tiempoBase;
+    private Fila fila;
+
+    public Cliente(int id, int tiempoBase, Fila fila) {
+        this.id = id;
+        this.tiempoBase = tiempoBase;
+        this.fila = fila;
+    }
+
+    public int getClienteId() {
+        return id;
+    }
+
+    public int getTiempoBase() {
+        return tiempoBase;
     }
 
     @Override
     public void run() {
-        int uidActual = 0;
-        while (uidActual != 100) {
-            buzon.modUltimaOrden(uidActual);
-            uidActual++;
-            try {
-                Thread.sleep(200);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+        fila.agregarCliente(this);
+        try {
+            Thread.sleep(new Random().nextInt(501));
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
         }
     }
 }

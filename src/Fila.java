@@ -1,48 +1,82 @@
-import java.util.List;
-import java.util.ArrayList;
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+import java.util.LinkedList;
+import java.util.Queue;
 
-public static void Fila(String[] args) {
-    String datos = "src/datos.csv";
-    List<List<Integer>> matrizClientes = new ArrayList<>();
-    int numeroCajeros = 0;
+// public static void Fila(String[] args) {
+//     String datos = "src/datos.csv";
+//     List<List<Integer>> matrizClientes = new ArrayList<>();
+//     int numeroCajeros = 0;
 
-    try (BufferedReader lec = new BufferedReader(new FileReader(datos))) {
-        String linea = lec.readLine();
-        if (linea != null) {
-            String[] primeraLinea = linea.split(",");
-            numeroCajeros = Integer.parseInt(primeraLinea[0]);
-        }
+//     List<Cajero> cajeros = new ArrayList<>();
+//     for (int i = 0; i < numeroCajeros; i++) {
+//         List<Integer> filaClientes = matrizClientes.get(i);
+//         Cajero cajero = new Cajero(i + 1, filaClientes, 1.0);
+//         cajeros.add(cajero);
+//         cajero.start();
+//     }
 
-        String lineaDatos;
-        while ((lineaDatos = lec.readLine()) != null) {
-            String[] valores = lineaDatos.split(",");
-            List<Integer> fila = new ArrayList<>();
-            for (int i = 1; i < valores.length; i++) {
-                fila.add(Integer.parseInt(valores[i]));
+//     for (Cajero cajero : cajeros) {
+//         try {
+//             cajero.join();
+//         } catch (InterruptedException e) {
+//             System.err.println("Error en el cajero " + cajero.getId() + ": " + e.getMessage());
+//         }
+//     }
+// }
+
+// class Fila {
+
+//     public Fila() {
+
+//     }
+
+//     private Queue<Cliente> filaClientes = new LinkedList<>();
+
+//     public synchronized void agregarCliente(Cliente cliente) {
+//         filaClientes.add(cliente);
+//         System.out
+//                 .println("Cliente agregado: " + cliente.getClienteId() + " - Tiempo Base: " + cliente.getTiempoBase());
+//         notify();
+//     }
+
+//     public synchronized Cliente retirarCliente() {
+//         if (filaClientes.isEmpty()) {
+//             return null;
+//         }
+
+//         while (filaClientes.isEmpty()) {
+//             try {
+//                 System.out.println("Cajero en espera...");
+//                 wait();
+//             } catch (InterruptedException e) {
+//                 e.printStackTrace();
+//             }
+//         }
+//         return filaClientes.poll();
+//     }
+
+// }
+
+public class Fila {
+    private Queue<Cliente> filaClientes = new LinkedList<>();
+
+    public synchronized void agregarCliente(Cliente cliente) {
+        filaClientes.add(cliente);
+        System.out
+                .println("Cliente " + cliente.getClienteId() + " agregado a la fila (tiempo de procesamiento: "
+                        + cliente.getTiempoBase() + ")");
+        notifyAll();
+    }
+
+    public synchronized Cliente retirarCliente() {
+        while (filaClientes.isEmpty()) {
+            try {
+                System.out.println("Cajero en esperando retiro de cliente...");
+                wait();
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
             }
-            matrizClientes.add(fila);
         }
-    } catch (IOException e) {
-        System.err.println("Error: " + e.getMessage());
-        return;
+        return filaClientes.poll();
     }
 
-    List<Cajero> cajeros = new ArrayList<>();
-    for (int i = 0; i < numeroCajeros; i++) {
-        List<Integer> filaClientes = matrizClientes.get(i);
-        Cajero cajero = new Cajero(i + 1, filaClientes, 1.0);
-        cajeros.add(cajero);
-        cajero.start();
-    }
-
-    for (Cajero cajero : cajeros) {
-        try {
-            cajero.join();
-        } catch (InterruptedException e) {
-            System.err.println("Error en el cajero " + cajero.getId() + ": " + e.getMessage());
-        }
-    }
 }
